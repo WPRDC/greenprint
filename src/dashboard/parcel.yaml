@@ -1,0 +1,16 @@
+
+
+
+identifiers:
+  fields:
+    - dataset: assessment
+      field: PARID
+    - dataset: boundaries
+      field: lot-block
+
+basic-details:
+
+
+building-details:
+
+land-details:

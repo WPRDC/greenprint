@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+
+}
+
+
+.maplibregl-popup >  .maplibregl-popup-content {
+  background: transparent;
+  box-shadow: none;
+
+}
+
+.maplibregl-popup > .maplibregl-popup-tip {
+  background: transparent;
+  border: 0;
+}
