@@ -7,7 +7,7 @@ export function Navbar(props: NavbarProps) {
   return (
     <header className="flex items-end border-b-2 border-black px-7 pb-8">
       <Image
-        src="/logo_alone.png"
+        src="/greenprint/logo_alone.png"
         alt="Greenprint logo"
         width={90.42}
         height={128}

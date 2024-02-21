@@ -46,7 +46,6 @@ export function formatValue<T extends Value = Value>(
   formatter?: Formatter<T>,
   emptyMessage?: ReactNode,
 ): ReactNode {
-  console.log(value);
   if (!value && value !== 0 && value !== false) return emptyMessage;
 
   if (!formatter) {

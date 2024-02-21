@@ -33,7 +33,7 @@ export function BasemapMenu({
         {Object.entries(basemaps).map(([name, { label }]) => (
           <BigMenuItem
             key={name}
-            image={`/basemaps/${name}-close.png`}
+            image={`/greenprint/basemaps/${name}-close.png`}
             id={name}
           >
             {label}
