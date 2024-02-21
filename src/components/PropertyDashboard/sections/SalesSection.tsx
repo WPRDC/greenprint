@@ -67,25 +67,26 @@ export async function SalesSection({
                 </th>
               </tr>
             </thead>
-            <tbody></tbody>
-            {recordSales
-              .sort((a, b) => Date.parse(a.date) - Date.parse(b.date))
-              .reverse()
-              .map(({ date, price, type }) => (
-                <tr key={date} className="font-mono even:bg-stone-100">
-                  <th className="pr-2 text-left font-sans">
-                    {new Date(date).toLocaleDateString(undefined, {
-                      timeZone: "UTC",
-                    })}
-                  </th>
-                  <td className="min-w-12 pr-3 text-right">
-                    {formatDollars(price)}
-                  </td>
-                  <td className="overflow-x-hidden truncate">
-                    {type ?? <Note>not recorded</Note>}
-                  </td>
-                </tr>
-              ))}
+            <tbody>
+              {recordSales
+                .sort((a, b) => Date.parse(a.date) - Date.parse(b.date))
+                .reverse()
+                .map(({ date, price, type }) => (
+                  <tr key={date} className="font-mono even:bg-stone-100">
+                    <th className="pr-2 text-left font-sans">
+                      {new Date(date).toLocaleDateString(undefined, {
+                        timeZone: "UTC",
+                      })}
+                    </th>
+                    <td className="min-w-12 pr-3 text-right">
+                      {formatDollars(price)}
+                    </td>
+                    <td className="overflow-x-hidden truncate">
+                      {type ?? <Note>not recorded</Note>}
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
           </table>
         )}
       </div>

@@ -2,7 +2,7 @@
 
 import { LayerCategory, LayerOptions, VisualOptions } from "@/types";
 import { Selection } from "react-aria-components";
-import { createContext, PropsWithChildren, useState } from "react";
+import { createContext, PropsWithChildren, useEffect, useState } from "react";
 import availableLayers from "@/layers";
 
 interface LayerSelectionContext {
@@ -15,7 +15,8 @@ export const LayersContext = createContext<LayerSelectionContext>({});
 
 export function LayerProvider({ children }: PropsWithChildren) {
   const [selection, setSelection] = useState<Record<LayerCategory, Selection>>({
-    base: new Set(["allegheny-county"]),
+    interactive: new Set([]),
+    base: new Set([]),
     "natural-features": new Set([]),
     "urban-green-features": new Set([]),
     "urban-green-features-planned": new Set([]),

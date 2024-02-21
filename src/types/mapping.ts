@@ -172,6 +172,7 @@ export interface BasemapOptions {
 }
 
 export type LayerCategory =
+  | "interactive"
   | "base"
   | "natural-features"
   | "other"

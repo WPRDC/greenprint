@@ -50,6 +50,10 @@ const layers: Record<
     layers: LayerOptions<VisualOptions>[];
   }
 > = {
+  interactive: {
+    label: "Interactive",
+    layers: [parcels],
+  },
   base: {
     label: "Base Layers",
     layers: [
@@ -57,7 +61,6 @@ const layers: Record<
       alleghenyWatersheds,
       municipalities,
       neighborhoods,
-      parcels,
       pittsburgh,
       pwsaCombinedSewersheds,
     ],
