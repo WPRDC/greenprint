@@ -1,15 +1,24 @@
 import type { Metadata } from "next";
-import { Inter, Roboto_Condensed } from "next/font/google";
+import {
+  Inconsolata,
+  JetBrains_Mono,
+  Roboto_Condensed,
+  Source_Code_Pro,
+} from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { LayerProvider } from "@/components/LayerProvider";
 
-const inter = Inter({ subsets: ["latin"] });
-
 const robotoCondensed = Roboto_Condensed({
   subsets: ["latin"],
   variable: "--font-roboto-condensed",
+  display: "swap",
+});
+
+const inconsolata = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-inconsolata",
   display: "swap",
 });
 
@@ -24,11 +33,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html
+      lang="en"
+      className={`${robotoCondensed.variable} ${inconsolata.variable}`}
+    >
       <LayerProvider>
-        <body
-          className={`${inter.className} ${robotoCondensed.className} flex h-screen flex-col`}
-        >
+        <body className="flex h-screen flex-col">
           <Navbar />
           {children}
         </body>

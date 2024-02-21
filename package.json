@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.18.1",
+    "classnames": "^2.5.1",
     "clsx": "^2.1.0",
     "maplibre-gl": "^3.6.2",
     "next": "14.0.4",

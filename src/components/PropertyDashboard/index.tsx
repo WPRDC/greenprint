@@ -1,16 +1,22 @@
-import { fetchOwnerName, fetchParcelData } from "@/lib/api";
+import { fetchBaseParcelData } from "@/lib/api";
 import Image from "next/image";
 import { makeAddress } from "@/lib/util";
 import { FieldValues } from "@/components/FieldValues";
-import { Table } from "@/components/Table";
-import { Chip } from "@/components/Chip";
-import { TbHomeHeart, TbLeaf, TbPigMoney } from "react-icons/tb";
-import { GiFarmTractor } from "react-icons/gi";
 import { OwnerInfo } from "@/components/PropertyDashboard/OwnerInfo";
 import { Suspense } from "react";
 import { OwnerInfoSkeleton } from "./OwnerInfoSkeleton";
-import { Label } from "@/components/Typography";
 import { ClassChip } from "@/components/PropertyDashboard/ClassChip";
+import { AssessmentSection } from "@/components/PropertyDashboard/sections/AssessmentSection";
+import { SalesSection } from "@/components/PropertyDashboard/sections/SalesSection";
+import { Card } from "./Card";
+import { formatDate } from "../util";
+import { AssessmentAppealsSection } from "@/components/PropertyDashboard/sections/AssessmentAppealsSection";
+import { FiledAssessmentAppealsSection } from "@/components/PropertyDashboard/sections/FiledAssessmentAppealsSection";
+import { CityViolationsSection } from "@/components/PropertyDashboard/sections/CityViolationsSection";
+import { PLIPermitsSection } from "@/components/PropertyDashboard/sections/PLIPermitsSection";
+import { ForeclosureFilingSection } from "@/components/PropertyDashboard/sections/ForeclosureFilingsSection";
+import { ConservatorshipRecordSection } from "@/components/PropertyDashboard/sections/ConservatorshipSection";
+import { TaxLiensSection } from "@/components/PropertyDashboard/sections/TaxLIensSection";
 
 export interface PropertyDashboardProps {
   parcelID: string;
@@ -19,7 +25,6 @@ export interface PropertyDashboardProps {
 export async function PropertyDashboard({ parcelID }: PropertyDashboardProps) {
   const {
     assessment,
-    // sales,
     // assessmentAppeals,
     // fieldAssessmentAppeal,
     // pliPermits,
@@ -27,140 +32,114 @@ export async function PropertyDashboard({ parcelID }: PropertyDashboardProps) {
     // foreclosureFilings,
     // currentTaxLiens,
     // conservatorshipRecords,
-    parcelBoundary,
-  } = await fetchParcelData(parcelID);
+    parcelBoundaries,
+  } = await fetchBaseParcelData(parcelID);
 
   const imgURL = `https://iasworld.alleghenycounty.us/iasworld/iDoc2/Services/GetPhoto.ashx?parid=${parcelID}&jur=002`;
+  if (!assessment || !parcelBoundaries) return null;
 
-  const [addressLine, cityLine] = makeAddress(assessment);
-  if (!assessment) return null;
+  const [addressLine, cityLine] = makeAddress(assessment.record);
   return (
-    <div>
+    <div className="bg-stone-300 pb-4">
       <div className="relative h-52 w-full">
         <div className="absolute inset-x-2 bottom-2 z-10 h-fit rounded-sm bg-lightgreen/50 p-2 backdrop-blur-md">
-          <div className="pb-0.5 text-4xl font-bold leading-none">
+          <div className="font-roboto pb-0.5 text-4xl font-bold leading-none">
             {addressLine}
           </div>
-          <div className="text-lg font-medium leading-none">{cityLine}</div>
+          <div className="font-roboto text-lg font-medium leading-none">
+            {cityLine}
+          </div>
         </div>
         <Image src={imgURL} alt="img" fill className="object-cover" />
+        <div className="absolute right-2 top-2 z-20 flex flex-col items-end space-y-1">
+          <ClassChip parcelClass={assessment.record.CLASSDESC} />
+          <ClassChip parcelClass={assessment.record.USEDESC} />
+        </div>
       </div>
-      <div className="p-4">
-        <div className="flex space-x-8">
-          <FieldValues
-            items={[
-              { id: "parcel_id", label: "Parcel ID", value: assessment.PARID },
-            ]}
-          />
-          <FieldValues
-            items={[
+
+      <div>
+        <div className="my-2 flex items-stretch">
+          <Card className="my-0 mr-1 w-full">
+            <FieldValues
+              items={[
+                {
+                  id: "parcel_id",
+                  label: "Parcel ID",
+                  value: assessment.record?.PARID,
+                },
+              ]}
+            />
+          </Card>
+          <Card className="my-0 ml-1 w-full">
+            <FieldValues
+              items={[
+                {
+                  id: "map_block_lot_no",
+                  label: "Block Lot No",
+                  value:
+                    parcelBoundaries.records &&
+                    parcelBoundaries.records[0].MAPBLOCKLO,
+                },
+              ]}
+            />
+          </Card>
+        </div>
+        <Card>
+          <Suspense fallback={<OwnerInfoSkeleton />}>
+            <OwnerInfo parcelID={parcelID} assessment={assessment.record} />
+          </Suspense>
+        </Card>
+        <AssessmentSection {...assessment} />
+        <Suspense>
+          <SalesSection
+            parcelID={parcelID}
+            assessmentSales={[
               {
-                id: "map_block_lot_no",
-                label: "Block Lot No",
-                value: parcelBoundary?.MAPBLOCKLO,
+                date: formatDate(assessment.record.SALEDATE),
+                type: assessment.record.SALEDESC,
+                price: assessment.record.SALEPRICE,
+              },
+              {
+                date: formatDate(assessment.record.PREVSALEDATE),
+                type: undefined,
+                price: assessment.record.PREVSALEPRICE,
+              },
+              {
+                date: formatDate(assessment.record.PREVSALEDATE2),
+                type: undefined,
+                price: assessment.record.PREVSALEPRICE2,
               },
             ]}
           />
-        </div>
-
-        <Suspense fallback={<OwnerInfoSkeleton />}>
-          <OwnerInfo parcelID={parcelID} assessment={assessment} />
         </Suspense>
 
-        <div>
-          <ClassChip parcelClass={assessment.CLASSDESC} />
-        </div>
+        <Suspense>
+          <PLIPermitsSection parcelID={parcelID} />
+        </Suspense>
 
-        <div className="mb-5">
-          <Label>Subsidies</Label>
-          {!!assessment.HOMESTEADFLAG && (
-            <Chip label="Homestead" icon={TbHomeHeart} variant="active" />
-          )}
-          {!!assessment.FARMSTEADFLAG && (
-            <Chip label="Farmstead" icon={GiFarmTractor} variant="active" />
-          )}
-          {!!assessment.CLEANGREEN && (
-            <Chip label="Clean & Green" icon={TbLeaf} variant="active" />
-          )}
-          {!!assessment.ABATEMENTFLAG && (
-            <Chip
-              label="Receives Abatement"
-              icon={TbPigMoney}
-              variant="active"
-            />
-          )}
-          {!assessment.HOMESTEADFLAG &&
-            !assessment.FARMSTEADFLAG &&
-            !assessment.CLEANGREEN &&
-            !assessment.ABATEMENTFLAG && (
-              <div className="font-mono italic">None</div>
-            )}
-        </div>
+        <Suspense>
+          <CityViolationsSection parcelID={parcelID} />
+        </Suspense>
 
-        <FieldValues
-          items={[
-            {
-              id: "municipality",
-              label: "Municipality",
-              value: assessment?.MUNIDESC,
-            },
-            {
-              id: "schooldesc",
-              label: "School District",
-              value: assessment?.SCHOOLDESC,
-            },
-            {
-              id: "TAXCODE",
-              label: "Tax Status",
-              value: assessment?.TAXDESC,
-            },
-            {
-              id: "OWNERDESC",
-              label: "Owner Type",
-              value: assessment?.OWNERDESC,
-            },
-            {
-              id: "CLASSDESC",
-              label: "Class",
-              value: assessment?.CLASSDESC,
-            },
-            {
-              id: "deed",
-              label: "Deed (book:page)",
-              value: `${assessment.DEEDBOOK}:${assessment.DEEDPAGE}`,
-            },
-          ]}
-        />
+        <Suspense>
+          <FiledAssessmentAppealsSection parcelID={parcelID} />
+        </Suspense>
 
-        <Table<number>
-          label="Assessed Values"
-          columns={["Building", "Land", "Total"]}
-          rows={["Local", "County", "Fair Market"]}
-          data={[
-            [
-              assessment.LOCALBUILDING,
-              assessment.LOCALLAND,
-              assessment.LOCALTOTAL,
-            ],
-            [
-              assessment.COUNTYBUILDING,
-              assessment.COUNTYLAND,
-              assessment.COUNTYTOTAL,
-            ],
-            [
-              assessment.FAIRMARKETBUILDING,
-              assessment.FAIRMARKETLAND,
-              assessment.FAIRMARKETTOTAL,
-            ],
-          ]}
-          format={(v) =>
-            new Intl.NumberFormat("en-US", {
-              style: "currency",
-              currency: "USD",
-              maximumFractionDigits: 0,
-            }).format(v)
-          }
-        />
+        <Suspense>
+          <AssessmentAppealsSection parcelID={parcelID} />
+        </Suspense>
+
+        <Suspense>
+          <ForeclosureFilingSection parcelID={parcelID} />
+        </Suspense>
+
+        <Suspense>
+          <TaxLiensSection parcelID={parcelID} />
+        </Suspense>
+
+        <Suspense>
+          <ConservatorshipRecordSection parcelID={parcelID} />
+        </Suspense>
       </div>
     </div>
   );

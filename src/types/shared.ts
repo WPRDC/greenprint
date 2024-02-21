@@ -24,7 +24,7 @@ export interface IDed {
   title: string;
 }
 
-export type Formatter<T extends Value = Value> = (value: T) => ReactNode;
+export type Formatter<T extends Value = Value> = (value?: T) => ReactNode;
 
 export type Value = string | number | boolean | undefined;
 

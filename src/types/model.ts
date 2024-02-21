@@ -133,7 +133,7 @@ export interface PropertySaleTransaction {
   INSTRTYPDESC: string;
 }
 
-export interface ArchiveAssessmentAppeal {
+export interface FiledAssessmentAppeal {
   parcel_id: string;
   class: string;
   class_group: string;
@@ -152,7 +152,7 @@ export interface ArchiveAssessmentAppeal {
   as_of: string;
 }
 
-export interface FiledAssessmentAppeal {
+export interface ArchiveAssessmentAppeal {
   "PARCEL ID": string;
   "TAX YEAR": number;
   CLASS: string;
@@ -250,4 +250,16 @@ export interface ParcelBoundary {
   dataspatial__wkt: string;
 }
 
-export interface PLIPermit {}
+export interface PLIPermit {
+  permit_id: string;
+  permit_type: string;
+  owner_name: string;
+  contractor_name: string;
+  work_description: string;
+  work_type: string;
+  commercial_or_residential: string;
+  total_project_value: string;
+  issue_date: string;
+  parcel_num: string;
+  address: string;
+}

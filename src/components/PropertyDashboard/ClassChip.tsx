@@ -1,4 +1,4 @@
-import { PropsWithChildren, useMemo } from "react";
+import { PropsWithChildren } from "react";
 
 interface ClassChipProps extends PropsWithChildren {
   parcelClass: string;
@@ -6,38 +6,37 @@ interface ClassChipProps extends PropsWithChildren {
 
 export function ClassChip({ parcelClass, children }: ClassChipProps) {
   let color = "#eee";
+  let textColor = "#000";
   switch (parcelClass) {
     case "RESIDENTIAL":
-      color = "#FFFF00";
+      color = "#facc15";
       break;
     case "COMMERCIAL":
-      color = "#FF0000";
+      color = "#f87171";
       break;
     case "INDUSTRIAL":
-      color = "#A002F0";
+      color = "#a78bfa";
       break;
     case "AGRICULTURAL":
-      color = "#228b22";
+      color = "#22c55e";
       break;
     case "GOVERNMENT":
-      color = "#0000FF";
+      color = "#60a5fa";
       break;
     case "OTHER":
       color = "#BEBEBE";
       break;
     case "UTILITIES":
-      color = "#2F4F4F";
+      color = "#22d3ee";
       break;
   }
 
   return (
     <div
-      className="flex w-fit items-center space-x-1 rounded-md border-2 border-stone-700 px-1"
-      style={{ background: color }}
+      className="flex w-fit items-center space-x-1 rounded-md border-2 px-1 py-0.5"
+      style={{ background: color, color: textColor, borderColor: textColor }}
     >
-      <div className="font-mono text-sm font-semibold uppercase">
-        {parcelClass}
-      </div>
+      <div className="font-mono text-sm font-bold uppercase">{parcelClass}</div>
     </div>
   );
 }

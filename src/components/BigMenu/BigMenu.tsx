@@ -1,10 +1,9 @@
 "use client";
 
 import { Menu, MenuProps } from "react-aria-components";
-import React, { ReactNode, useMemo } from "react";
-import { className } from "postcss-selector-parser";
-import clsx from "clsx";
+import React, { ReactNode } from "react";
 import { Size } from "@/types";
+import classNames from "classnames";
 
 export interface BigMenuProps extends MenuProps<{ id: string }> {
   title?: ReactNode;
@@ -25,7 +24,7 @@ export function BigMenu({
     <Menu
       {...props}
       selectionMode="single"
-      className={clsx("py-1", {
+      className={classNames("py-1", {
         "flex w-full items-center overflow-x-auto":
           orientation === "horizontal",
         "grid ": orientation === "grid",

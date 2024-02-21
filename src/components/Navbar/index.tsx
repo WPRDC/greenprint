@@ -13,10 +13,10 @@ export function Navbar(props: NavbarProps) {
         height={128}
       />
       <div className="">
-        <div className="mb-1 font-title text-[2.4rem] uppercase text-leafgreen">
+        <div className="font-roboto mb-1 text-[2.4rem] uppercase text-leafgreen">
           Greenprint
         </div>
-        <div className="pb-3.5 text-[0.8rem] font-bold uppercase text-lightgreen">
+        <div className="font-roboto pb-3.5 text-[0.8rem] font-bold uppercase text-lightgreen">
           A Project of Allegheny Land Trust and The Western Pennsylvania
           Regional Data Center
         </div>

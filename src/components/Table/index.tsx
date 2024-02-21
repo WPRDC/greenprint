@@ -4,7 +4,7 @@ import { formatValue } from "@/lib/util";
 import { Label } from "@/components/Typography";
 
 export interface TableProps<T extends Value = Value> {
-  label: ReactNode;
+  label?: ReactNode;
   columns: string[];
   rows: string[];
   data: (T | FormattedValue<T>)[][];
@@ -26,13 +26,17 @@ export function Table<T extends Value = Value>({
 
   return (
     <div>
-      <Label>{label}</Label>
-      <table className="table-fixed font-mono text-sm">
+      {!!label && <Label>{label}</Label>}
+      <table className="w-full table-fixed font-mono text-sm">
         <thead>
           <tr>
             <td></td>
             {columns.map((col) => (
-              <th key={col} scope="col" className="border-b-2 border-black">
+              <th
+                key={col}
+                scope="col"
+                className="border-b-2 border-black font-sans"
+              >
                 {col}
               </th>
             ))}
@@ -41,7 +45,7 @@ export function Table<T extends Value = Value>({
         <tbody>
           {rows.map((row, i) => (
             <tr key={row} className="even:bg-stone-100">
-              <th scope="row" className="truncate text-right">
+              <th scope="row" className="truncate text-right font-sans">
                 {row}
               </th>
               {data[i].map((cell, j) => (

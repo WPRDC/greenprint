@@ -1,19 +1,16 @@
 import "server-only";
 
 import {
-  ArchiveAssessmentAppeal,
-  CityViolation,
-  ConservatorshipRecord,
+  APIMultiResult,
+  APISingleResult,
   DatastoreTable,
-  FiledAssessmentAppeal,
-  ForeclosureFiling,
+  FieldDef,
   ParcelBoundary,
   parcelIDFields,
-  PLIPermit,
   PropertyAssessment,
-  PropertySaleTransaction,
-  TaxLienWithCurrentStatus,
+  QueryResult,
 } from "@/types";
+import { toFieldLookup } from "@/components/util";
 
 const HOST = process.env.NEXT_PUBLIC_API_HOST ?? "https://data.wprdc.org";
 
@@ -36,11 +33,11 @@ export async function fetchOwnerName(parcelID: string): Promise<string> {
   }
 }
 
-export async function fetchSQLSearch<T>(
+export async function fetchSQLSearch<T extends object>(
   sql: string,
   queryParams: Record<string, string> = {},
   options: RequestInit = {},
-): Promise<T[] | undefined> {
+): Promise<Partial<QueryResult<T>>> {
   try {
     // Build request URL
     const requestUrl = `${HOST}/api/action/datastore_search_sql?${new URLSearchParams(
@@ -48,120 +45,119 @@ export async function fetchSQLSearch<T>(
     ).toString()}`;
     // Trigger API call
     const response = await fetch(requestUrl, options);
-    const body: { result: { records: T[] } } = await response.json();
+    const body: {
+      result: {
+        records: T[];
+        fields: FieldDef<T>[];
+      };
+    } = await response.json();
     const result = body["result"];
-    if (result) return result["records"];
-    else return undefined;
+    if (result) return { fields: result["fields"], records: result["records"] };
+    else return {};
   } catch (error) {
     console.error(error);
     throw new Error(String(error));
   }
 }
 
-export function fetchParcelRecords<T>(
+export async function fetchDatastoreSearch<T extends object>(
+  table: string,
+  filters: string,
+  queryParams: Record<string, string> = {},
+  options: RequestInit = {},
+): Promise<Partial<QueryResult<T>>> {
+  try {
+    // Build request URL
+    const requestUrl = `${HOST}/api/action/datastore_search?${new URLSearchParams(
+      { ...queryParams, id: table, filters },
+    ).toString()}`;
+
+    // Trigger API call
+    const response = await fetch(requestUrl, options);
+    const body: {
+      result: {
+        records: T[];
+        fields: FieldDef<T>[];
+      };
+    } = await response.json();
+
+    const result = body["result"];
+    if (result) return { fields: result["fields"], records: result["records"] };
+    else return {};
+  } catch (error) {
+    console.error(error);
+    throw new Error(String(error));
+  }
+}
+
+export function fetchParcelRecords<T extends object>(
   parcelID: string,
   table: DatastoreTable,
-): Promise<T[] | undefined> {
+  queryParams?: Record<string, string>,
+): Promise<Partial<QueryResult<T>>> {
   const parcelIDField = parcelIDFields[table];
-  return fetchSQLSearch<T>(
-    `SELECT * FROM ${table} WHERE "${parcelIDField}" = '${parcelID}'`,
+  return fetchDatastoreSearch<T>(
+    table,
+    JSON.stringify({ [parcelIDField]: parcelID }),
+    queryParams,
   );
 }
 
-export async function fetchSingleParcelRecord<T>(
+export async function fetchSingleParcelRecord<T extends object>(
   parcelID: string,
   table: DatastoreTable,
-): Promise<T | undefined> {
-  const results = await fetchParcelRecords<T>(parcelID, table);
-  if (!results) {
+  queryParams?: Record<string, string>,
+): Promise<APISingleResult<T> | undefined> {
+  const { fields, records } = await fetchParcelRecords<T>(
+    parcelID,
+    table,
+    queryParams,
+  );
+  if (!records || !fields) {
     console.warn(`Nothing found for ${parcelID} on table ${table}.`);
     return undefined;
   }
-  if (results.length > 1)
+  if (records.length > 1)
     console.warn(
       `More than one record found for ${parcelID} on table ${table}.`,
     );
-  return results[0];
+  return { fields: toFieldLookup(fields), record: records[0] };
 }
 
-export async function fetchParcelData(parcelID: string) {
+export async function fetchMultipleParcelRecords<T extends object>(
+  parcelID: string,
+  table: DatastoreTable,
+  queryParams?: Record<string, string>,
+): Promise<APIMultiResult<T> | undefined> {
+  const { fields, records } = await fetchParcelRecords<T>(
+    parcelID,
+    table,
+    queryParams,
+  );
+  if (!records || !fields) {
+    console.warn(`Nothing found for ${parcelID} on table ${table}.`);
+    return undefined;
+  }
+  return { fields: toFieldLookup(fields), records: records };
+}
+
+export async function fetchBaseParcelData(parcelID: string) {
   const assessmentPromise = fetchSingleParcelRecord<PropertyAssessment>(
     parcelID,
     DatastoreTable.Assessment,
   );
-  const salesPromise = fetchParcelRecords<PropertySaleTransaction>(
-    parcelID,
-    DatastoreTable.PropertySaleTransactions,
-  );
-  const assessmentAppealsPromise = fetchParcelRecords<ArchiveAssessmentAppeal>(
-    parcelID,
-    DatastoreTable.AssessmentAppeals,
-  );
-  const fieldAssessmentAppealPromise =
-    fetchSingleParcelRecord<FiledAssessmentAppeal>(
-      parcelID,
-      DatastoreTable.FiledAssessmentAppeals,
-    );
-  const pliPermitsPromise = fetchParcelRecords<PLIPermit>(
-    parcelID,
-    DatastoreTable.PLIPermit,
-  );
-  const cityViolationsPromise = fetchParcelRecords<CityViolation>(
-    parcelID,
-    DatastoreTable.CityViolations,
-  );
-  const foreclosureFilingsPromise = fetchParcelRecords<ForeclosureFiling>(
-    parcelID,
-    DatastoreTable.ForeclosureFilings,
-  );
-  const currentTaxLiensPromise = fetchParcelRecords<TaxLienWithCurrentStatus>(
-    parcelID,
-    DatastoreTable.TaxLiensWithCurrentStatus,
-  );
-  const conservatorshipRecordsPromise =
-    fetchParcelRecords<ConservatorshipRecord>(
-      parcelID,
-      DatastoreTable.ConservatorshipRecord,
-    );
-  const parcelBoundaryPromise = fetchSingleParcelRecord<ParcelBoundary>(
+  const parcelBoundaryPromise = fetchMultipleParcelRecords<ParcelBoundary>(
     parcelID,
     DatastoreTable.ParcelBoundaries,
   );
 
-  const [
-    assessment,
-    sales,
-    assessmentAppeals,
-    fieldAssessmentAppeal,
-    pliPermits,
-    cityViolations,
-    foreclosureFilings,
-    currentTaxLiens,
-    conservatorshipRecords,
-    parcelBoundary,
-  ] = await Promise.all([
+  const [assessment, parcelBoundaries] = await Promise.all([
     assessmentPromise,
-    salesPromise,
-    assessmentAppealsPromise,
-    fieldAssessmentAppealPromise,
-    pliPermitsPromise,
-    cityViolationsPromise,
-    foreclosureFilingsPromise,
-    currentTaxLiensPromise,
-    conservatorshipRecordsPromise,
     parcelBoundaryPromise,
   ]);
 
   return {
     assessment,
-    sales,
-    assessmentAppeals,
-    fieldAssessmentAppeal,
-    pliPermits,
-    cityViolations,
-    foreclosureFilings,
-    currentTaxLiens,
-    conservatorshipRecords,
-    parcelBoundary,
+    parcelBoundaries,
   };
 }

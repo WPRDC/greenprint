@@ -1,6 +1,5 @@
 import { fetchOwnerName } from "@/lib/api";
 import { PropertyAssessment } from "@/types";
-import { TbUser } from "react-icons/tb";
 import { FieldValues } from "@/components/FieldValues";
 
 export interface OwnerInfoProps {
@@ -19,28 +18,19 @@ export async function OwnerInfo({ parcelID, assessment }: OwnerInfoProps) {
   ].join(" ");
 
   return (
-    <section className="mb-4">
-      <FieldValues
-        items={[
-          {
-            id: "owner-info",
-            label: (
-              <div className="flex items-center">
-                <TbUser />
-                <div className="text-xs font-bold uppercase text-stone-500">
-                  Owner
-                </div>
-              </div>
-            ),
-            value: (
-              <div>
-                <div className="font-mono">{owner}</div>
-                <div className="font-mono">{address}</div>
-              </div>
-            ),
-          },
-        ]}
-      />
-    </section>
+    <FieldValues
+      items={[
+        {
+          id: "owner-info",
+          label: "Owner",
+          value: (
+            <div className="font-mono text-sm">
+              <div>{owner}</div>
+              <div>{address}</div>
+            </div>
+          ),
+        },
+      ]}
+    />
   );
 }

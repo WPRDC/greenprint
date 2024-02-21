@@ -1,5 +1,5 @@
 import type { Config } from "tailwindcss";
-
+import defaultTheme from "tailwindcss/defaultTheme";
 const config: Config = {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -9,7 +9,8 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        title: ["var(--font-roboto-condensed)"],
+        roboto: ["var(--font-roboto-condensed)"],
+        mono: ["var(--font-inconsolata)", ...defaultTheme.fontFamily.mono],
       },
       colors: {
         leafgreen: "rgb(76, 119, 55)",

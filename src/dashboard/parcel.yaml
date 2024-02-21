@@ -1,16 +1,18 @@
 
 
 
-identifiers:
-  fields:
-    - dataset: assessment
-      field: PARID
-    - dataset: boundaries
-      field: lot-block
+address: ""
+fields:
+  - id: tax-muni
+    label: MUNICODE.label
+    info: "Municipality associated with a specific parcel"
+    render: "{MUNIDESC} ({MUNICODE})"
+  - id: tax-schooldistrict
+    label: SCHOOLCODE.label
+    info: "School district  associated with a specific parcel"
+    render: "{SCHOOLDESC} ({SCHOOLCODE})"
+  - id: val-neighborhood
+    label: Valuation Neighborhood
+    info: NEIGHCODE.info
+    render: "{NEIGHDESC} ({NEIGHCODE})"
 
-basic-details:
-
-
-building-details:
-
-land-details:

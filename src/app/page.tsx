@@ -1,12 +1,8 @@
 import { LayerMenu } from "@/components/LayerMenu";
 import { Map } from "@/components/Map";
 import { PropertyDashboard } from "@/components/PropertyDashboard";
-import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { LoadingMessage } from "@/components/LoadingMessage";
-import PulseLoader from "react-spinners/PulseLoader";
-import { TbUser } from "react-icons/tb";
-import { OwnerInfoSkeleton } from "@/components/PropertyDashboard/OwnerInfoSkeleton";
 
 export default function Home({
   params,
@@ -27,8 +23,8 @@ export default function Home({
       <div className="max-h-full flex-grow ">
         <Map selectedParcel={parcelID}></Map>
       </div>
-      <div className="w-full max-w-md overflow-auto border-l border-blue-800">
-        {!!parcelID && typeof parcelID === "string" && (
+      <div className="relative w-full max-w-md overflow-auto border-l border-blue-800">
+        {!!parcelID && (
           <Suspense
             key={parcelID}
             fallback={

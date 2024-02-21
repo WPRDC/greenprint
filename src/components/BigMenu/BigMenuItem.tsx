@@ -3,7 +3,7 @@ import { MenuItem, MenuItemProps, Text } from "react-aria-components";
 import Image from "next/image";
 import { TbCircleCheckFilled } from "react-icons/tb";
 import { Size } from "@/types";
-import clsx from "clsx";
+import classNames from "classnames";
 
 export interface BigButtonMenuItemProps extends MenuItemProps {
   children: string;
@@ -23,7 +23,7 @@ export function BigMenuItem({
       className="group relative m-1 rounded-sm outline-0 ring-1 ring-transparent active:shadow-none focus:shadow-sm focus:ring-stone-400 selected:ring-stone-800"
     >
       <div
-        className={clsx(
+        className={classNames(
           "cursor-pointer rounded-sm border-2 border-stone-400 group-focus:bg-stone-200 group-selected:border-stone-800 group-selected:bg-blue-50",
           {
             "w-12": size === "S",
@@ -33,7 +33,7 @@ export function BigMenuItem({
         )}
       >
         <div
-          className={clsx("relative w-full border-b border-stone-800", {
+          className={classNames("relative w-full border-b border-stone-800", {
             "h-8": size === "S",
             "h-12": size === "M",
             "h-16": size === "L",
@@ -49,7 +49,7 @@ export function BigMenuItem({
           />
         </div>
         <div
-          className={clsx(
+          className={classNames(
             "flex flex-col items-center bg-transparent px-1 py-0.5",
             {
               "px-0.5 py-0": size === "S",
@@ -58,7 +58,7 @@ export function BigMenuItem({
         >
           <Text
             slot="label"
-            className={clsx(
+            className={classNames(
               "group-selected:font-stone-800 text-center text-xs font-medium uppercase",
               {
                 "text-sm": size === "L",

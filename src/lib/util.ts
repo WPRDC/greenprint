@@ -44,12 +44,25 @@ export function makeAddress(
 export function formatValue<T extends Value = Value>(
   value?: T,
   formatter?: Formatter<T>,
+  emptyMessage?: ReactNode,
 ): ReactNode {
+  console.log(value);
+  if (!value && value !== 0 && value !== false) return emptyMessage;
+
   if (!formatter) {
-    if (typeof value === "boolean")
+    if (typeof value === "boolean") {
       return String(value).charAt(0).toUpperCase() + String(value).slice(1);
+    }
     return String(value);
   }
-  if (value != undefined) return formatter(value);
-  return undefined;
+  return formatter(value);
+}
+
+export function formatDollars(value?: number) {
+  if (!value && value !== 0) return value;
+  return value.toLocaleString("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  });
 }
