@@ -16,3 +16,8 @@ body {
   background: transparent;
   border: 0;
 }
+
+a {
+  @apply text-leafgreen underline font-medium;
+  @apply hover:text-lightgreen hover:decoration-2;
+}
