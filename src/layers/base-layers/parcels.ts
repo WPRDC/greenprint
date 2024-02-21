@@ -20,7 +20,8 @@ const layer: LayerOptions<SolidVisualProps> = {
   minZoom: 15,
   interactive: true,
   color: "#000",
-  opacity: ({ hoveredFeatures }) => [
+  selectedColor: "#7BC24EFF",
+  opacity: ({ hoveredFeatures, selectedParcel }) => [
     "interpolate",
     ["exponential", 0.5],
     ["zoom"],
@@ -31,34 +32,44 @@ const layer: LayerOptions<SolidVisualProps> = {
     15.5,
     [
       "case",
-      ["!=", ["get", "PIN"], "COMMON GROUND"],
+      ["==", ["get", "PIN"], selectedParcel ?? ""],
+      0.7,
       [
         "case",
+        ["!=", ["get", "PIN"], "COMMON GROUND"],
         [
-          "==",
-          ["get", "PIN"],
-          !!hoveredFeatures && hoveredFeatures[0].properties["PIN"],
+          "case",
+          [
+            "==",
+            ["get", "PIN"],
+            !!hoveredFeatures && hoveredFeatures[0].properties["PIN"],
+          ],
+          0.5,
+          0.1,
         ],
-        0.5,
         0.1,
       ],
-      0.1,
     ],
     16.5,
     [
       "case",
-      ["!=", ["get", "PIN"], "COMMON GROUND"],
+      ["==", ["get", "PIN"], selectedParcel ?? ""],
+      0.85,
       [
         "case",
+        ["!=", ["get", "PIN"], "COMMON GROUND"],
         [
-          "==",
-          ["get", "PIN"],
-          (!!hoveredFeatures && hoveredFeatures[0].properties["PIN"]) ?? "",
+          "case",
+          [
+            "==",
+            ["get", "PIN"],
+            (!!hoveredFeatures && hoveredFeatures[0].properties["PIN"]) ?? "",
+          ],
+          0.6,
+          0.2,
         ],
-        0.6,
         0.2,
       ],
-      0.2,
     ],
   ],
   borderOpacity: [

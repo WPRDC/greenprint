@@ -91,6 +91,7 @@ interface BaseVisualProps {
 export interface SolidVisualProps extends BaseVisualProps {
   visualMode: ColoringMode.Solid;
   color: ColorSpecification;
+  selectedColor?: ColorSpecification;
   borderColor?: ColorSpecification;
 }
 
