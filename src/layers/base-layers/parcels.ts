@@ -8,14 +8,14 @@ const layer: LayerOptions<SolidVisualProps> = {
   title: "Parcels",
   type: GeoType.Polygon,
   description: "",
-  tileJSONSource: "https://data.wprdc.org/tiles/table.greenprint_parcels._geom",
+  tileJSONSource: "https://data.wprdc.org/tiles/table.parcel_index.geom",
   extent: Extent.County,
   publisher: ac,
   source: {
     title: "Allegheny County Parcel Boundaries",
     url: "https://data.wprdc.org/dataset/allegheny-county-parcel-boundaries1",
   },
-  sourceLayer: "table.greenprint_parcels._geom",
+  sourceLayer: "table.parcel_index.geom",
   resourceID: "3f50d47a-ab54-4da2-9f03-8519006e9fc9",
   minZoom: 15,
   interactive: true,
@@ -32,17 +32,17 @@ const layer: LayerOptions<SolidVisualProps> = {
     15.5,
     [
       "case",
-      ["==", ["get", "PIN"], selectedParcel ?? ""],
+      ["==", ["get", "parcel_id"], selectedParcel ?? ""],
       0.7,
       [
         "case",
-        ["!=", ["get", "PIN"], "COMMON GROUND"],
+        ["!=", ["get", "parcel_id"], "COMMON GROUND"],
         [
           "case",
           [
             "==",
-            ["get", "PIN"],
-            !!hoveredFeatures && hoveredFeatures[0].properties["PIN"],
+            ["get", "parcel_id"],
+            !!hoveredFeatures && hoveredFeatures[0].properties["parcel_id"],
           ],
           0.5,
           0.1,
@@ -53,17 +53,18 @@ const layer: LayerOptions<SolidVisualProps> = {
     16.5,
     [
       "case",
-      ["==", ["get", "PIN"], selectedParcel ?? ""],
+      ["==", ["get", "parcel_id"], selectedParcel ?? ""],
       0.85,
       [
         "case",
-        ["!=", ["get", "PIN"], "COMMON GROUND"],
+        ["!=", ["get", "parcel_id"], "COMMON GROUND"],
         [
           "case",
           [
             "==",
-            ["get", "PIN"],
-            (!!hoveredFeatures && hoveredFeatures[0].properties["PIN"]) ?? "",
+            ["get", "parcel_id"],
+            (!!hoveredFeatures && hoveredFeatures[0].properties["parcel_id"]) ??
+              "",
           ],
           0.6,
           0.2,

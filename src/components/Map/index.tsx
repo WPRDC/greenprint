@@ -216,14 +216,14 @@ const HoverPopupRow = ({
 }: {
   feature: MapGeoJSONFeature;
 }): ReactElement => {
-  const [address, city] = makeAddress(feature.properties);
+  const { address, city, parcel_id } = feature.properties;
   return (
     <div className="text-lg font-bold">
       {address && <div className="font-sans leading-none">{address}</div>}
       {address && city && (
         <div className="mb-1 font-sans text-xs leading-none">{city}</div>
       )}
-      <div className="font-mono text-xs">{feature.properties.PIN}</div>
+      <div className="font-mono text-xs">{parcel_id}</div>
     </div>
   );
 };
