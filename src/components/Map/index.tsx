@@ -74,7 +74,7 @@ export function Map({ children, selectedParcel }: PropsWithChildren<MapProps>) {
       setClickPoint(null);
       setClickedFeatures(null);
       const feature = features[0];
-      const parcelID = feature.properties["PIN"];
+      const parcelID = feature.properties["parcel_id"];
       if (parcelID) router.push(`${pathname}?parcel=${parcelID}`);
     }
     if (!!features && features.length > 1) {
@@ -96,7 +96,7 @@ export function Map({ children, selectedParcel }: PropsWithChildren<MapProps>) {
 
   function getCursor(features?: MapGeoJSONFeature[] | null) {
     if (!features || !features.length) return "grab";
-    if (features[0].properties.PIN == "COMMON GROUND") {
+    if (features[0].properties.parcel_id == "COMMON GROUND") {
       return "not-allowed";
     }
     return "pointer";
@@ -189,7 +189,7 @@ export function Map({ children, selectedParcel }: PropsWithChildren<MapProps>) {
                 )}
                 <Button
                   className="w-full px-2 text-left hover:bg-leafgreen/20 hover:backdrop-blur-md"
-                  onPress={() => navigate(feature.properties.PIN)}
+                  onPress={() => navigate(feature.properties.parcel_id)}
                 >
                   <HoverPopupRow feature={feature} />
                 </Button>

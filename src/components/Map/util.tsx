@@ -57,7 +57,7 @@ export function extractFeatures(
     return null;
   }
   const features = e.features.filter(
-    (f) => f.properties["PIN"] != "COMMON GROUND",
+    (f) => f.properties["parcel_id"] != "COMMON GROUND",
   );
 
   // if nothing found in list of features, they must all be COMMON GROUND
