@@ -13,6 +13,7 @@
     "classnames": "^2.5.1",
     "clsx": "^2.1.0",
     "maplibre-gl": "^3.6.2",
+    "jsdom": "^25.0.1",
     "next": "14.0.4",
     "react": "^18",
     "react-aria-components": "^1.0.0",
@@ -27,6 +28,7 @@
     "tinycolor2": "^1.6.0"
   },
   "devDependencies": {
+    "@types/jsdom": "^21.1.7",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

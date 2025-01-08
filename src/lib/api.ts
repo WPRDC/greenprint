@@ -12,24 +12,35 @@ import {
 } from "@/types";
 import { toFieldLookup } from "@/components/util";
 
+import { JSDOM } from "jsdom";
+
 const HOST = process.env.NEXT_PUBLIC_API_HOST ?? "https://data.wprdc.org";
 
 export async function fetchOwnerName(parcelID: string): Promise<string> {
   try {
-    const requestURL = `https://tools.wprdc.org/property-whois/whois/${parcelID}/`;
+    // id of span element where the owner name is stored
+    const TARGET_ID = "#MainContent_InfoPane_ownerLbl";
 
-    const response = await fetch(requestURL);
-    const { name, success } = (await response.json()) as {
-      name: string;
-      success: boolean;
-    };
-    if (name) return name;
-    else {
-      throw new Error(`Owner not found for ${parcelID}`);
-    }
+    const PREFIX_LENGTH = 12; // "Owner Name: ".length;
+
+    // url on real estate portal
+    const sourceURL = `https://realestate.alleghenycounty.us/GeneralInfo?ID=${parcelID}`;
+
+    const response = await fetch(sourceURL);
+
+    // parse the real estate portal site's html
+    const body = await response.text();
+    const dom = new JSDOM(body);
+    const owner = dom.window.document
+      .querySelector(TARGET_ID)
+      ?.textContent?.substring(PREFIX_LENGTH);
+
+    // extract the owner name
+    if (owner) return owner;
+    return "NOT FOUND";
   } catch (error) {
-    console.error(`Owner not found for ${parcelID}`);
-    throw new Error(`Owner not found for ${parcelID}`);
+    // eslint-disable-next-line no-console -- rare but useful
+    throw error;
   }
 }
 
